@@ -1,0 +1,19 @@
+# Core data processing
+pandas
+numpy
+polars
+pyarrow
+pyreadr          # read R .RData / .R data files
+geopandas
+
+# Machine learning & stats
+scikit-learn
+scipy
+
+# Visualization
+matplotlib
+seaborn
+python-ternary   # imported as `ternary`
+
+# Utilities
+tqdm

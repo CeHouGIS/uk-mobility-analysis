@@ -1,0 +1,33 @@
+# --- Data artifacts (never commit raw or intermediate mobility/POI data) ---
+temp_data.parquet
+*.parquet
+*.RData
+*.rdata
+*.Rdata
+# Large/intermediate CSV data (the small *_columns.csv schema file is force-kept below)
+processed_data/
+output_data/
+data_*/
+
+# --- Proprietary font (Monotype Arial); kept locally for plotting only ---
+Arial.ttf
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.so
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Force-keep the small column-schema reference file
+!England_individual_1127_columns.csv
