@@ -1,4 +1,4 @@
-# python /code/Mob/filter_ori_files.py
+# python src/s0_ingest/filter_raw_pings.py
 from glob import glob
 import pandas as pd
 import os

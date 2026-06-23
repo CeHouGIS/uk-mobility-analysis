@@ -1,4 +1,4 @@
-# python /code/Mob/A_0_Shizhen_process/A_4_get_weighted_hours.py --year 2022
+# python src/s3_weighted_hours/weighted_hours.py --year 2022
 import polars as pl
 import pandas as pd
 import pyreadr

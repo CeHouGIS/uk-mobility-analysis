@@ -1,4 +1,4 @@
-# python /code/Mob/data_process_20251212.py
+# python src/s0_ingest/enrich_daily_records.py
 
 from __future__ import annotations
 

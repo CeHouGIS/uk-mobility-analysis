@@ -30,4 +30,4 @@ Thumbs.db
 .vscode/
 
 # Force-keep the small column-schema reference file
-!England_individual_1127_columns.csv
+!data/England_individual_1127_columns.csv

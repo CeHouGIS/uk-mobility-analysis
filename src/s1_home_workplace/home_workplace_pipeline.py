@@ -1,4 +1,4 @@
-# python /code/Mob/A_0_Shizhen_process/total_pipeline.py
+# python src/s1_home_workplace/home_workplace_pipeline.py
 import pandas as pd
 from glob import glob
 import os

@@ -1,4 +1,4 @@
-# python /code/Mob/tem_20251220.py
+# python src/utils/sample_devices.py
 import pandas as pd
 import os
 from glob import glob

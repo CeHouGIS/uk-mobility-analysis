@@ -1,4 +1,4 @@
-# python /code/Mob/ML.py
+# python src/s2_amenity/select_by_device.py
 
 from glob import glob
 import pandas as pd
