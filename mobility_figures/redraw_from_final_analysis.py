@@ -86,21 +86,21 @@ def ternary_distribution(df, year):
     df[f"{work_col}_norm"] = df[f"workplace_days_{year}"] / df[f"{work_col}_lad_mean"]
     data_points = df[[f"{home_col}_norm", f"{amen_col}_norm", f"{work_col}_norm"]].dropna().values
 
-    # close each composition to sum 1, then add a small jitter so individuals
-    # don't pile on top of each other (cosmetic de-overlap of the central cluster)
-    data_points = data_points[data_points.sum(axis=1) > 0]
-    pts = data_points / data_points.sum(axis=1, keepdims=True)
-    rng = np.random.default_rng(42)
-    pts = np.clip(pts + rng.normal(0, 0.015, size=pts.shape), 1e-6, None)
-    pts = pts / pts.sum(axis=1, keepdims=True)
-    scale = 100
+    scale = 100; counts = {}
+    for (a, b, c) in data_points:
+        total = a + b + c
+        if total == 0: continue
+        a, b, c = a / total, b / total, c / total
+        i = int(round(a * scale)); j = int(round(b * scale)); k = scale - i - j
+        if k < 0: continue
+        counts[(i, j, k)] = counts.get((i, j, k), 0) + 1
 
     fig, tax = ternary.figure(scale=scale)
     fig.set_size_inches(10, 8)
-    tax.scatter((pts * scale).tolist(), marker="o", s=3, alpha=0.10,
-                color="#2b6cb0", edgecolors="none", zorder=2)
+    tax.heatmap(counts, style="triangular", cmap="YlGnBu", colorbar=True)
     tax.boundary(linewidth=2.0)
     tax.gridlines(color="black", multiple=10)
+    tax.gridlines(color="blue", multiple=1, linewidth=0.5, alpha=0.1)
     tax.ticks(axis="lbr", linewidth=1, multiple=20, offset=0.025, tick_formats="%.1f")
     tax.get_axes().axis("off"); tax.clear_matplotlib_ticks()
     tax.set_title(f"Home, Workplace, Amenities Distribution ({year})", fontsize=18)
