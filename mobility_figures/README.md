@@ -1,11 +1,17 @@
 # Regenerated mobility figures
 
-Generated from `/workplace/Mob/data/England_ML.csv`.
-- `make_figures.py` — quick first pass (root folder + `adapted_clustering/`).
-- `make_figures_notebook_style.py` — **prettier** set in `notebook_style/`, with
-  plotting styling ported from `notebooks/s4_ternary_plots.ipynb` and
-  `notebooks/s4_clustering.ipynb`.
-Run either with `/opt/conda/bin/python <script>.py`.
+Run any script with `/opt/conda/bin/python <script>.py`.
+
+- `redraw_from_final_analysis.py` → **`faithful_latest/`** — the real deal: original
+  `cluster_profiles.py` figures redrawn from `fig_output/final_analysis_data.csv`
+  (the wide table) **using its existing `cluster_2020`/`cluster_2021` labels** (no
+  re-clustering), so cluster contents/numbering match the original `fig_output`
+  reference figures. Ternary uses LAD-normalised days.
+  Files: `feature_means_original_values_{2020,2021}.png`, `pca_clusters_{2020,2021}.png`,
+  `ternary_distribution_{2020,2021}.png`, `transition_matrix_{counts,percent}.png`.
+- `make_figures.py` — quick first pass on the long table (root folder + `adapted_clustering/`).
+- `make_figures_notebook_style.py` — **prettier** set in `notebook_style/`, styling
+  ported from `notebooks/s4_ternary_plots.ipynb` and `notebooks/s4_clustering.ipynb`.
 
 ## `notebook_style/` (recommended — ported from the plotting notebooks)
 - `ternary_heatmap_2020XX.png` (×4) — ternary density heatmap, notebook styling
