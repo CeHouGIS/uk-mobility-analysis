@@ -76,15 +76,13 @@ def transition(df):
 
 
 def ternary_distribution(df, year):
-    # verbatim from cluster_profiles.py: LAD-normalised days
+    # FIX: plot the ACTUAL hours composition (home/workplace/amenities share of total
+    # hours). The old LAD-normalised version divided each component by its own LAD mean
+    # then re-closed to sum 1, collapsing every individual to the centre (~1/3 each).
     home_col = f"home_hours_{year}"; amen_col = f"hours_amenties_{year}_all"; work_col = f"workplace_hours_{year}"
-    df[f"{home_col}_lad_mean"] = df.groupby("home_2021_lad_code")[f"home_days_{year}"].transform("mean")
-    df[f"{amen_col}_lad_mean"] = df.groupby("home_2021_lad_code")[f"days_amenties_{year}_all"].transform("mean")
-    df[f"{work_col}_lad_mean"] = df.groupby("home_2021_lad_code")[f"workplace_days_{year}"].transform("mean")
-    df[f"{home_col}_norm"] = df[f"home_days_{year}"] / df[f"{home_col}_lad_mean"]
-    df[f"{amen_col}_norm"] = df[f"days_amenties_{year}_all"] / df[f"{amen_col}_lad_mean"]
-    df[f"{work_col}_norm"] = df[f"workplace_days_{year}"] / df[f"{work_col}_lad_mean"]
-    data_points = df[[f"{home_col}_norm", f"{amen_col}_norm", f"{work_col}_norm"]].dropna().values
+    comp = df[[home_col, amen_col, work_col]].dropna()
+    comp = comp[comp.sum(axis=1) > 0]
+    data_points = comp.values
 
     scale = 100; counts = {}
     for (a, b, c) in data_points:
@@ -104,9 +102,9 @@ def ternary_distribution(df, year):
     tax.ticks(axis="lbr", linewidth=1, multiple=20, offset=0.025, tick_formats="%.1f")
     tax.get_axes().axis("off"); tax.clear_matplotlib_ticks()
     tax.set_title(f"Home, Workplace, Amenities Distribution ({year})", fontsize=18)
-    tax.bottom_axis_label("Home Days (%)", offset=0.06, fontsize=12)
-    tax.right_axis_label("Amenities Days (%)", offset=0.16, fontsize=12)
-    tax.left_axis_label("Workplace Days (%)", offset=0.16, fontsize=12)
+    tax.bottom_axis_label("Home Hours (%)", offset=0.06, fontsize=12)
+    tax.right_axis_label("Amenities Hours (%)", offset=0.16, fontsize=12)
+    tax.left_axis_label("Workplace Hours (%)", offset=0.16, fontsize=12)
     tax.get_axes().set_facecolor("white")
     fp = os.path.join(OUT, f"ternary_distribution_{year}.png")
     plt.savefig(fp, dpi=300, bbox_inches="tight"); plt.close(fig); print(f"[FIG] {fp}")
