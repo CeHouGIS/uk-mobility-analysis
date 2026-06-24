@@ -183,13 +183,16 @@ def visualize_ternary_distribution(df: pd.DataFrame, year: str, save_path: str):
     workplace_col = f'workplace_hours_{year}'
 
 
-    # FIX: plot the ACTUAL hours composition (each person's home/workplace/amenities
-    # share of their total hours). The previous version divided each component by its
-    # own LAD mean and then re-closed to sum 1, which forced every individual to the
-    # centre of the triangle (~1/3, 1/3, 1/3) and produced a meaningless central blob.
-    comp = df[[home_col, amenities_col, workplace_col]].dropna()
-    comp = comp[comp.sum(axis=1) > 0]
-    data_points = comp.values
+    df[f'{home_col}_lad_mean'] = df.groupby('home_2021_lad_code')[f'home_days_{year}'].transform('mean')
+    df[f'{amenities_col}_lad_mean'] = df.groupby('home_2021_lad_code')[f'days_amenties_{year}_all'].transform('mean')
+    df[f'{workplace_col}_lad_mean'] = df.groupby('home_2021_lad_code')[f'workplace_days_{year}'].transform('mean')
+
+    df[f'{home_col}_norm'] = df[f'home_days_{year}'] / df[f'{home_col}_lad_mean']
+    df[f'{amenities_col}_norm'] = df[f'days_amenties_{year}_all'] / df[f'{amenities_col}_lad_mean']
+    df[f'{workplace_col}_norm'] = df[f'workplace_days_{year}'] / df[f'{workplace_col}_lad_mean']
+
+
+    data_points = df[[f'{home_col}_norm', f'{amenities_col}_norm', f'{workplace_col}_norm']].dropna().values
 
     # 2. 数据处理：网格计数
     scale = 100
@@ -231,9 +234,9 @@ def visualize_ternary_distribution(df: pd.DataFrame, year: str, save_path: str):
     tax.set_title(f"Home, Workplace, Amenities Distribution ({year})", fontsize=18)
 
     # 标签与数据轴匹配 (bottom, right, left) -> (Home, Amenities, Workplace)
-    tax.bottom_axis_label("Home Hours (%)", offset=0.06, fontsize=fontsize)
-    tax.right_axis_label("Amenities Hours (%)", offset=0.16, fontsize=fontsize)
-    tax.left_axis_label("Workplace Hours (%)", offset=0.16, fontsize=fontsize)
+    tax.bottom_axis_label("Home Days (%)", offset=0.06, fontsize=fontsize)
+    tax.right_axis_label("Amenities Days (%)", offset=0.16, fontsize=fontsize)
+    tax.left_axis_label("Workplace Days (%)", offset=0.16, fontsize=fontsize)
 
     tax.get_axes().set_facecolor('white')
     
