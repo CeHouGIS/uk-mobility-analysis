@@ -190,6 +190,26 @@ def fig4():
     df_select['cluster_202003'] = lab[n2:2 * n2]
     df_select['cluster_202103'] = lab[2 * n2:]
 
+    # Align cluster numbering to the reference figures: match my Feb-2020 cluster
+    # centroids to the reference cluster means (Hungarian assignment) and relabel,
+    # so cluster IDs match the originals (KMeans label order is otherwise arbitrary).
+    from scipy.spatial.distance import cdist
+    from scipy.optimize import linear_sum_assignment
+    REF = np.array([
+        [0.4, 1.2, 0.4, 0.9, 1.0, 1.9, 0.3],   # ref cluster 0
+        [0.6, 4.7, 1.5, 3.0, 3.3, 6.5, 0.8],   # ref cluster 1
+        [0.6, 2.6, 0.9, 1.8, 2.0, 3.8, 0.6],   # ref cluster 2
+        [0.8, 1.2, 0.4, 0.9, 0.9, 1.9, 0.2],   # ref cluster 3
+        [0.7, 8.9, 2.9, 5.4, 6.2, 12.1, 1.2],  # ref cluster 4
+    ])
+    feb_cols = [f'{c}_202002' for c in BASE_FREQ_COLS]
+    mine = df_select.groupby('cluster_202002')[feb_cols].mean().reindex(range(k)).values
+    row, col = linear_sum_assignment(cdist(mine, REF))
+    remap = {int(r): int(c) for r, c in zip(row, col)}
+    for c in ['cluster_202002', 'cluster_202003', 'cluster_202103']:
+        df_select[c] = df_select[c].map(remap)
+    print(f"[INFO] cluster remap (mine -> reference): {remap}")
+
     # Fig 4d: Feb 2020 -> Mar 2020
     tm = pd.crosstab(df_select['cluster_202002'], df_select['cluster_202003'])
     _transition_heatmap(tm, 'Cluster (Mar 2020)', 'fig/Fig 4d heatmap_nature.jpg')
