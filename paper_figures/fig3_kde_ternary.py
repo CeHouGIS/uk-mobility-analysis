@@ -2,8 +2,8 @@
 """
 KDE version of the Fig 3 ternary. Same data prep as triangle_plot.ipynb
 (workplace / amenity / home frequency, each normalised to its mean, per period),
-but rendered as a smooth 2-D gaussian_kde density in the triangle's cartesian
-space instead of raw grid counts. Writes ternary_kde_<period>.jpg into fig/.
+rendered as a smooth 2-D gaussian_kde density instead of raw grid counts.
+The three periods share ONE common colour scale (vmax) so they are comparable.
 Run from this directory:  cd /workplace/Mob/ML && python fig3_kde_ternary.py
 """
 import warnings
@@ -19,6 +19,9 @@ from scipy.stats import gaussian_kde
 
 SCALE = 100
 SQRT3_2 = np.sqrt(3) / 2.0
+PERIODS = [('202002', 'fig/ternary_kde_202002.jpg'),
+           ('202003', 'fig/ternary_kde_202003.jpg'),
+           ('202103', 'fig/ternary_kde_202103.jpg')]
 
 
 def cart(comp):
@@ -43,33 +46,31 @@ def build_df_select():
     return ds
 
 
-def kde_ternary(df_select, period, save):
+def compute_density(df_select, period):
     pts = df_select[[f'workplace_frequency_{period}_norm',
                      f'amenity_frequency_all_{period}_norm',
                      f'home_frequency_{period}_norm']].dropna().values
     pts = pts[pts.sum(axis=1) > 0]
-    pts = pts / pts.sum(axis=1, keepdims=True)              # close to sum 1 (as in Fig 3)
-
+    pts = pts / pts.sum(axis=1, keepdims=True)
     rng = np.random.default_rng(0)
     sample = pts if len(pts) <= 20000 else pts[rng.choice(len(pts), 20000, replace=False)]
     kde = gaussian_kde(cart(sample))
-
     keys, comp = [], []
     for i in range(SCALE + 1):
         for j in range(SCALE + 1 - i):
             keys.append((i, j, SCALE - i - j)); comp.append([i, j, SCALE - i - j])
     dens = kde(cart(np.array(comp) / SCALE))
-    density = {k: float(d) for k, d in zip(keys, dens)}
-    vmax = float(np.percentile(list(density.values()), 99))  # robust scale
+    return {k: float(d) for k, d in zip(keys, dens)}, len(pts)
 
+
+def plot_density(density, period, save, vmax):
     plt.rcParams['font.sans-serif'] = ['Arial', 'DejaVu Sans']; plt.rcParams['font.size'] = 12
     fig, tax = ternary.figure(scale=SCALE)
     fig.set_size_inches(5.5, 4.5)
     tax.heatmap(density, style="triangular", cmap='YlGnBu', colorbar=False, vmin=0, vmax=vmax)
     norm = mpl.colors.Normalize(vmin=0, vmax=vmax)
     sm = mpl.cm.ScalarMappable(norm=norm, cmap='YlGnBu'); sm.set_array([])
-    cb = plt.colorbar(sm, ax=tax.get_axes(), fraction=0.046, pad=0.04)
-    cb.set_label('KDE density')
+    cb = plt.colorbar(sm, ax=tax.get_axes(), fraction=0.046, pad=0.04); cb.set_label('KDE density')
     tax.boundary(linewidth=0.8); tax.gridlines(color="lightgray", multiple=20, linewidth=0.5)
     tax.right_axis_label("Amenity frequency (%)", offset=0.12, fontsize=12)
     tax.bottom_axis_label("Workplace frequency (%)", offset=0.01, fontsize=12)
@@ -77,13 +78,18 @@ def kde_ternary(df_select, period, save):
     tax.ticks(axis='lbr', linewidth=0.5, multiple=20, tick_formats="%.0f")
     tax.get_axes().axis('off'); tax.clear_matplotlib_ticks()
     plt.savefig(save, bbox_inches='tight', dpi=300); plt.close(fig)
-    print(f"[FIG] {save}  (n={len(pts):,})")
 
 
 if __name__ == "__main__":
     ds = build_df_select()
-    for m, save in [('202002', 'fig/ternary_kde_202002.jpg'),
-                    ('202003', 'fig/ternary_kde_202003.jpg'),
-                    ('202103', 'fig/ternary_kde_202103.jpg')]:
-        kde_ternary(ds, m, save)
+    densities = {}
+    for m, save in PERIODS:
+        densities[m], n = compute_density(ds, m)
+        print(f"[KDE] {m}: n={n:,}  99pct={np.percentile(list(densities[m].values()), 99):.2f}")
+    # shared colour scale: max of the per-period 99th percentiles (robust + consistent)
+    vmax = max(np.percentile(list(d.values()), 99) for d in densities.values())
+    print(f"[INFO] shared vmax = {vmax:.2f}")
+    for m, save in PERIODS:
+        plot_density(densities[m], m, save, vmax)
+        print(f"[FIG] {save}")
     print("[DONE]")
