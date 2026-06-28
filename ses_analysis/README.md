@@ -26,7 +26,11 @@ socioeconomically stratified; ethnicity and age separate them most strongly — 
 high-activity cluster is younger, more ethnically diverse and higher-income.
 
 ## Analysis B — inertia by SES tercile (`B_stability_by_ses.png`)
-Share staying in the same lifestyle cluster Feb 2020 → Mar 2021, by tercile of each dimension.
+"Stability" = a device is in the **same lifestyle cluster** at a later month as in its
+**baseline month Feb 2020 (pre-COVID)**. Two transitions are shown per SES tercile:
+**Feb 2020 → Mar 2020** (first lockdown, ~60–62% stable) and **Feb 2020 → Mar 2021**
+(one year into COVID, ~44–49% stable — stability decays with the longer gap).
+Directions below refer to the one-year (COVID) transition.
 
 | Dimension | Direction | Low → High stability |
 |-----------|-----------|----------------------|

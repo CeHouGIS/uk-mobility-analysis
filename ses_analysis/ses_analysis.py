@@ -119,19 +119,34 @@ plt.savefig(f"{OUT}/A_ses_by_cluster.png", dpi=300, bbox_inches='tight'); plt.cl
 print(f"[FIG] {OUT}/A_ses_by_cluster.png")
 
 # ---------------- Analysis B ----------------
-d['stable_covid'] = (d['cluster_202002'] == d['cluster_202103']).astype(int)  # Feb 2020 -> Mar 2021
-fig, axs = plt.subplots(1, 4, figsize=(17, 4.0))
-print("\n[B] cluster stability (Feb2020->Mar2021, %) by tercile:")
+# "Stability" = a device is in the SAME lifestyle cluster at the later month as in
+# its baseline month Feb 2020 (202002, pre-COVID). Two transitions:
+d['stable_lockdown'] = (d['cluster_202002'] == d['cluster_202003']).astype(int)  # Feb 2020 -> Mar 2020 (first lockdown)
+d['stable_covid']    = (d['cluster_202002'] == d['cluster_202103']).astype(int)  # Feb 2020 -> Mar 2021 (1 year into COVID)
+TRANS = [('stable_lockdown', 'Feb 2020 → Mar 2020  (first lockdown)', '#9ecae1'),
+         ('stable_covid',    'Feb 2020 → Mar 2021  (one year into COVID)', '#08519c')]
+fig, axs = plt.subplots(1, 4, figsize=(18, 4.6))
+print("\n[B] stability (% still in the Feb-2020 lifestyle cluster) by tercile:")
 for ax, (var, lab) in zip(axs, DIMS):
     sub = d.dropna(subset=[var]).copy()
     sub['grp'] = pd.qcut(sub[var].rank(method='first'), 3, labels=['Low', 'Medium', 'High'])
-    rate = sub.groupby('grp')['stable_covid'].mean() * 100
-    chi2, p, dof, _ = stats.chi2_contingency(pd.crosstab(sub['grp'], sub['stable_covid']))
-    rate.plot(kind='bar', ax=ax, color=['#9ecae1', '#4292c6', '#08519c'], width=0.8, edgecolor='black', linewidth=0.4)
-    ax.set_title(f"{lab}\nchi2 p={p:.1e}", fontsize=9)
-    ax.set_xlabel(''); ax.set_ylabel('Stayed in same cluster (%)'); ax.set_ylim(0, 60)
+    rate = sub.groupby('grp')[[t[0] for t in TRANS]].mean() * 100
+    rate.columns = [t[1] for t in TRANS]
+    rate.plot(kind='bar', ax=ax, color=[t[2] for t in TRANS], width=0.8,
+              edgecolor='black', linewidth=0.4, legend=False)
+    p_cov = stats.chi2_contingency(pd.crosstab(sub['grp'], sub['stable_covid']))[1]
+    ax.set_title(f"{lab}\n(COVID-transition $\\chi^2$ p={p_cov:.0e})", fontsize=9)
+    ax.set_xlabel(''); ax.set_ylabel('Still in same lifestyle cluster (%)'); ax.set_ylim(0, 70)
     plt.setp(ax.get_xticklabels(), rotation=0)
-    print(f"  {var:16}: " + "  ".join(f"{k}={v:.1f}" for k, v in rate.items()) + f"  (chi2 p={p:.1e})")
+    r_lock = sub.groupby('grp')['stable_lockdown'].mean() * 100
+    r_cov = sub.groupby('grp')['stable_covid'].mean() * 100
+    print(f"  {var:14} lockdown[" + " ".join(f"{k}={v:.1f}" for k, v in r_lock.items()) +
+          "]  covid[" + " ".join(f"{k}={v:.1f}" for k, v in r_cov.items()) + "]")
+handles, labels = axs[0].get_legend_handles_labels()
+fig.legend(handles, labels, loc='upper center', ncol=2, frameon=False, bbox_to_anchor=(0.5, 1.03), fontsize=10)
+fig.suptitle("Lifestyle-cluster stability by neighbourhood SES tercile\n"
+             "(% of individuals still in their Feb-2020 / pre-COVID lifestyle cluster)",
+             y=1.13, fontsize=11)
 sns.despine(); plt.tight_layout()
 plt.savefig(f"{OUT}/B_stability_by_ses.png", dpi=300, bbox_inches='tight'); plt.close()
 print(f"[FIG] {OUT}/B_stability_by_ses.png")
