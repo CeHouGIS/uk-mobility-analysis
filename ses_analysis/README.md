@@ -2,36 +2,50 @@
 
 Addresses reviewer concerns on (a) the socioeconomic dimension of behavioral inertia and
 (b) analytical independence of K-means vs the fixed-effects models — the SES variables are
-**external** (UK Census 2021), so this is independent validation, not the same data re-confirming itself.
+**external** (UK Census 2021 + ONS income), so this is independent validation, not the same
+data re-confirming itself.
 
-`ses_analysis.py` — pipeline (run with the data files in place):
+`ses_analysis.py` pipeline:
 1. Reproduce the paper's KMeans clusters (k=5, reference-aligned) from `England_ML.csv`.
 2. Link `device → home MSOA` via `final_analysis_data.csv` (also gives `income_2018`).
-3. Build MSOA-level SES from **2021 Census** (Nomis bulk): `pct_degree` (TS067, % Level 4+),
-   `pct_manag_prof` (TS062 NS-SeC, % managerial & professional). Home MSOA codes match the
-   2021 census codes at ~98%.
+3. Build four **neighbourhood (MSOA-level)** SES/demographic dimensions, join on home MSOA.
+
+| Dimension | Variable | Source | Level |
+|-----------|----------|--------|-------|
+| Income | `income_msoa` | ONS income (`income_2018`) averaged to MSOA | MSOA* |
+| Occupational | `pct_manag_prof` (% NS-SeC L1–L6) | Census 2021 **TS062** | MSOA |
+| Demographic – age | `median_age` (from 5-yr bands) | Census 2021 **TS007a** | MSOA |
+| Demographic – ethnicity | `pct_minority` (% non-White) | Census 2021 **TS021** | MSOA |
+
+\* `income_2018` is natively ~LSOA-level; aggregated to the MSOA mean so all four dimensions
+are uniformly MSOA. Home MSOA codes match the 2021 census codes at ~98%.
 
 ## Analysis A — SES by lifestyle cluster (`A_ses_by_cluster.png`)
-Boxplots of income / % degree / % managerial-professional by cluster (+ Kruskal-Wallis).
-Lifestyle clusters **are** socioeconomically stratified: higher-activity clusters sit in
-higher-income, higher-education neighbourhoods. Effect sizes are modest (≈£3.5k median income,
-≈5pp degree).
+Boxplots of each dimension by cluster (+ Kruskal-Wallis). Lifestyle clusters **are**
+socioeconomically stratified; ethnicity and age separate them most strongly — the
+high-activity cluster is younger, more ethnically diverse and higher-income.
 
-## Analysis B — inertia by SES group (`B_stability_by_ses.png`)
-Share staying in the same lifestyle cluster, Feb 2020 → Mar 2020 and Feb 2020 → Mar 2021,
-by neighbourhood-income tercile. Higher-income areas are **less** stable over COVID
-(47.9% Low → 44.1% High for the 2021 transition; χ² p≈2e-13) — i.e. behavioral inertia is
-stronger in lower-SES neighbourhoods.
+## Analysis B — inertia by SES tercile (`B_stability_by_ses.png`)
+Share staying in the same lifestyle cluster Feb 2020 → Mar 2021, by tercile of each dimension.
+
+| Dimension | Direction | Low → High stability |
+|-----------|-----------|----------------------|
+| Income | higher → less inertia | 47.7 → 44.1% |
+| % managerial/professional | higher → less inertia | 47.7 → 45.0% |
+| Median age | older → **more** inertia | 45.3 → 47.9% |
+| % ethnic minority | more diverse → less inertia | 49.1 → 44.0% |
+
+Coherent story: affluent / younger / more-diverse neighbourhoods changed behaviour more
+during COVID (lower inertia); lower-SES / older / more-homogeneous areas were more "stuck".
 
 ## Caveats (for the rebuttal)
 - **Ecological**: SES is neighbourhood (MSOA) level, not individual — report as "neighbourhood SES".
-- **Coverage**: 50,648 / 105,347 clustered devices (48%) have home geography; cluster mix of the
-  matched vs unmatched subsample is similar (no strong selection), but should be reported.
+- **Coverage**: 50,648 / 105,347 clustered devices (48%) have home geography; matched vs unmatched
+  cluster mix is similar (no strong selection) but should be reported.
 - **Pseudo-replication**: many devices share an MSOA, so the very small p-values reflect N +
-  non-independence, not large effects. A final version should aggregate to MSOA or use a
-  mixed model (MSOA random effect).
+  non-independence, not large effects (effects are ≈3–5 pp). A final version should aggregate to
+  MSOA or use a mixed model (MSOA random effect).
 
-Data note: the device-level joined table (`clusters_with_ses.csv`) contains device IDs + home
-MSOA and is **not** committed.
-
-Sources: ONS Census 2021 via Nomis bulk (`census2021-ts067`, `census2021-ts062`).
+Data note: the device-level joined table (`clusters_with_ses.csv`, device IDs + home MSOA) and the
+Census bulk files are **not** committed. Census tables: ONS Census 2021 via Nomis bulk
+(`census2021-ts062 / ts007a / ts021`).
