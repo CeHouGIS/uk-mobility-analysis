@@ -50,6 +50,17 @@ during COVID (lower inertia); lower-SES / older / more-homogeneous areas were mo
   non-independence, not large effects (effects are ≈3–5 pp). A final version should aggregate to
   MSOA or use a mixed model (MSOA random effect).
 
-Data note: the device-level joined table (`clusters_with_ses.csv`, device IDs + home MSOA) and the
-Census bulk files are **not** committed. Census tables: ONS Census 2021 via Nomis bulk
+## Per-month figures & data exports
+- `A_ses_by_cluster_{202002,202003,202103}.png` — Analysis A repeated with **each month's**
+  cluster (Feb 2020 / Mar 2020 / Mar 2021). Generator: `per_month_ses.py`.
+- Minimal figure data (with 95% CI): `A_ses_by_cluster_data.csv` (per cluster: 5-number summary
+  + mean & 95% CI), `B_stability_by_ses_data.csv` (per tercile×transition: stability % + 95% CI),
+  and per-month `A_ses_by_cluster_<month>_data.csv`.
+- Full per-row plotting data (no device IDs / MSOA codes): `A_ses_by_cluster_FULLDATA.csv`
+  (cluster + 4 SES values per device) and `B_stability_by_ses_FULLDATA.csv` (SES + terciles +
+  stability flags). `clusters_ses_allmonths.csv` = slim per-device table (all 3 months' clusters
+  + SES + stability), also ID-free.
+
+Data note: only ID-free aggregate/row data is committed. The device-ID-keyed table and the Census
+bulk files are **not** committed. Census tables: ONS Census 2021 via Nomis bulk
 (`census2021-ts062 / ts007a / ts021`).

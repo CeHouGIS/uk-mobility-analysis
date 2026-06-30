@@ -1,0 +1,25 @@
+dimension,ses_tercile,transition,n,stability_pct,ci95_low,ci95_high
+Neighbourhood income (£),Low,Feb2020->Mar2020 (first lockdown),16883,61.71,60.98,62.45
+Neighbourhood income (£),Low,Feb2020->Mar2021 (one year into COVID),16883,47.73,46.98,48.49
+Neighbourhood income (£),Medium,Feb2020->Mar2020 (first lockdown),16882,61.58,60.85,62.31
+Neighbourhood income (£),Medium,Feb2020->Mar2021 (one year into COVID),16882,47.49,46.74,48.24
+Neighbourhood income (£),High,Feb2020->Mar2020 (first lockdown),16883,60.06,59.32,60.8
+Neighbourhood income (£),High,Feb2020->Mar2021 (one year into COVID),16883,44.06,43.31,44.81
+% managerial & professional,Low,Feb2020->Mar2020 (first lockdown),16546,61.97,61.23,62.71
+% managerial & professional,Low,Feb2020->Mar2021 (one year into COVID),16546,47.69,46.92,48.45
+% managerial & professional,Medium,Feb2020->Mar2020 (first lockdown),16545,61.24,60.5,61.98
+% managerial & professional,Medium,Feb2020->Mar2021 (one year into COVID),16545,46.72,45.95,47.48
+% managerial & professional,High,Feb2020->Mar2020 (first lockdown),16546,60.12,59.37,60.86
+% managerial & professional,High,Feb2020->Mar2021 (one year into COVID),16546,44.98,44.22,45.74
+Median age (years),Low,Feb2020->Mar2020 (first lockdown),16546,60.53,59.78,61.27
+Median age (years),Low,Feb2020->Mar2021 (one year into COVID),16546,45.32,44.56,46.08
+Median age (years),Medium,Feb2020->Mar2020 (first lockdown),16545,60.79,60.04,61.53
+Median age (years),Medium,Feb2020->Mar2021 (one year into COVID),16545,46.17,45.41,46.92
+Median age (years),High,Feb2020->Mar2020 (first lockdown),16546,62.01,61.28,62.75
+Median age (years),High,Feb2020->Mar2021 (one year into COVID),16546,47.89,47.13,48.65
+% ethnic minority,Low,Feb2020->Mar2020 (first lockdown),16546,62.23,61.49,62.97
+% ethnic minority,Low,Feb2020->Mar2021 (one year into COVID),16546,49.11,48.34,49.87
+% ethnic minority,Medium,Feb2020->Mar2020 (first lockdown),16545,61.05,60.31,61.79
+% ethnic minority,Medium,Feb2020->Mar2021 (one year into COVID),16545,46.24,45.48,47.0
+% ethnic minority,High,Feb2020->Mar2020 (first lockdown),16546,60.05,59.3,60.8
+% ethnic minority,High,Feb2020->Mar2021 (one year into COVID),16546,44.03,43.27,44.79

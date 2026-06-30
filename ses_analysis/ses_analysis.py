@@ -151,5 +151,52 @@ sns.despine(); plt.tight_layout()
 plt.savefig(f"{OUT}/B_stability_by_ses.png", dpi=300, bbox_inches='tight'); plt.close()
 print(f"[FIG] {OUT}/B_stability_by_ses.png")
 
-d.to_csv(f"{OUT}/clusters_with_ses.csv", index=False)
+# ---------------- Export the minimal figure data (aggregate only, no device IDs) ----------------
+# A (boxplot): per cluster the 5-number summary + mean & 95% CI of the mean.
+def _boxstats(s):
+    s = s.dropna().values
+    q1, med, q3 = np.percentile(s, [25, 50, 75]); iqr = q3 - q1
+    lo = s[s >= q1 - 1.5 * iqr].min(); hi = s[s <= q3 + 1.5 * iqr].max()
+    m = s.mean(); se = s.std(ddof=1) / np.sqrt(len(s))
+    return dict(n=len(s), q1=q1, median=med, q3=q3, whisker_low=lo, whisker_high=hi,
+                mean=m, mean_ci95_low=m - 1.96 * se, mean_ci95_high=m + 1.96 * se)
+
+rowsA = []
+for var, lab in DIMS:
+    for cl, g in d.dropna(subset=[var, 'cluster_202002']).groupby('cluster_202002'):
+        rowsA.append({'dimension': lab, 'cluster': int(cl), **_boxstats(g[var])})
+pd.DataFrame(rowsA).round(3).to_csv(f"{OUT}/A_ses_by_cluster_data.csv", index=False)
+print(f"[DATA] {OUT}/A_ses_by_cluster_data.csv")
+
+# B (bar): per tercile x transition the stability % + 95% CI of the proportion (Wald).
+rowsB = []
+for var, lab in DIMS:
+    sub = d.dropna(subset=[var]).copy()
+    sub['grp'] = pd.qcut(sub[var].rank(method='first'), 3, labels=['Low', 'Medium', 'High'])
+    for grp, g in sub.groupby('grp'):
+        for tcol, tlab in [('stable_lockdown', 'Feb2020->Mar2020 (first lockdown)'),
+                           ('stable_covid', 'Feb2020->Mar2021 (one year into COVID)')]:
+            pr = g[tcol].mean(); n = len(g); se = np.sqrt(pr * (1 - pr) / n)
+            rowsB.append({'dimension': lab, 'ses_tercile': str(grp), 'transition': tlab, 'n': n,
+                          'stability_pct': round(pr * 100, 2),
+                          'ci95_low': round((pr - 1.96 * se) * 100, 2),
+                          'ci95_high': round((pr + 1.96 * se) * 100, 2)})
+pd.DataFrame(rowsB).to_csv(f"{OUT}/B_stability_by_ses_data.csv", index=False)
+print(f"[DATA] {OUT}/B_stability_by_ses_data.csv")
+
+# ---------------- Full per-row data behind each figure (no device IDs / MSOA codes) ----------------
+full = d.copy()
+for var, _ in DIMS:
+    full[f'{var}_tercile'] = pd.qcut(full[var].rank(method='first'), 3, labels=['Low', 'Medium', 'High'])
+full[['cluster_202002'] + [v for v, _ in DIMS]].round(3).to_csv(
+    f"{OUT}/A_ses_by_cluster_FULLDATA.csv", index=False)                       # boxplot point cloud
+full[[v for v, _ in DIMS] + [f'{v}_tercile' for v, _ in DIMS] + ['stable_lockdown', 'stable_covid']].round(3).to_csv(
+    f"{OUT}/B_stability_by_ses_FULLDATA.csv", index=False)                     # bar inputs (tercile + stability)
+print(f"[DATA] full-data A ({len(full):,} rows) + B written")
+
+# slim all-months table (no device IDs / MSOA codes) — drives the per-month figures
+SLIM = ['cluster_202002', 'cluster_202003', 'cluster_202103', 'income_msoa',
+        'pct_manag_prof', 'median_age', 'pct_minority', 'stable_lockdown', 'stable_covid']
+d[SLIM].round(3).to_csv(f"{OUT}/clusters_ses_allmonths.csv", index=False)
+print(f"[DATA] {OUT}/clusters_ses_allmonths.csv ({len(d):,} rows)")
 print(f"\n[DONE] {OUT}")

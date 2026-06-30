@@ -1,0 +1,21 @@
+month,dimension,cluster,n,q1,median,q3,whisker_low,whisker_high,mean,mean_ci95_low,mean_ci95_high
+Mar 2020 (first lockdown),Neighbourhood income (£),0,14467,38600.0,44500.0,51033.333,21000.0,69547.368,45337.594,45185.538,45489.65
+Mar 2020 (first lockdown),Neighbourhood income (£),1,3705,40300.0,47718.182,55057.895,22475.0,76700.0,48037.968,47701.202,48374.733
+Mar 2020 (first lockdown),Neighbourhood income (£),2,14777,38964.0,45037.5,52422.222,21300.0,72600.0,46090.448,45931.28,46249.616
+Mar 2020 (first lockdown),Neighbourhood income (£),3,17106,38100.0,43800.0,50291.667,21300.0,68500.0,44592.317,44457.562,44727.072
+Mar 2020 (first lockdown),Neighbourhood income (£),4,593,41425.0,47800.0,53700.0,25000.0,71400.0,47747.94,46988.186,48507.694
+Mar 2020 (first lockdown),% managerial & professional,0,14140,27.342,34.746,41.923,5.81,63.649,34.666,34.501,34.831
+Mar 2020 (first lockdown),% managerial & professional,1,3651,26.736,34.823,43.586,8.325,65.895,35.381,35.014,35.747
+Mar 2020 (first lockdown),% managerial & professional,2,14534,27.094,34.722,42.372,5.81,64.621,34.863,34.694,35.033
+Mar 2020 (first lockdown),% managerial & professional,3,16733,26.818,33.804,40.899,5.81,61.782,33.81,33.663,33.956
+Mar 2020 (first lockdown),% managerial & professional,4,579,25.096,31.741,41.266,9.488,64.338,32.832,31.963,33.7
+Mar 2020 (first lockdown),Median age (years),0,14140,38.563,42.654,46.803,26.222,59.112,42.567,42.466,42.669
+Mar 2020 (first lockdown),Median age (years),1,3651,36.112,39.386,43.533,25.093,54.627,39.996,39.819,40.173
+Mar 2020 (first lockdown),Median age (years),2,14534,37.652,41.697,45.821,25.441,57.631,41.804,41.708,41.899
+Mar 2020 (first lockdown),Median age (years),3,16733,38.654,42.697,47.011,26.161,59.525,42.783,42.693,42.874
+Mar 2020 (first lockdown),Median age (years),4,579,34.83,37.361,40.98,26.222,50.206,38.215,37.815,38.614
+Mar 2020 (first lockdown),% ethnic minority,0,14140,3.66,7.327,17.306,0.793,37.742,13.726,13.471,13.981
+Mar 2020 (first lockdown),% ethnic minority,1,3651,7.828,21.404,40.326,0.921,87.653,26.524,25.829,27.22
+Mar 2020 (first lockdown),% ethnic minority,2,14534,4.635,10.651,24.467,0.886,54.175,17.59,17.301,17.879
+Mar 2020 (first lockdown),% ethnic minority,3,16733,3.515,6.623,16.34,0.793,35.577,13.018,12.787,13.249
+Mar 2020 (first lockdown),% ethnic minority,4,579,15.282,34.525,54.324,1.106,90.061,35.615,33.756,37.474
